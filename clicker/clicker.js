@@ -52,7 +52,7 @@ function stats() {
 
 function keyPressed() {
     if (gameState == 0) {
-        if (key == ' ') {
+        if (key == 'c') {
             points += round(((1 + upgradeCount1) * (1 + 0.1 * upgradeCount2)) ** (1 + .001 * upgradeCount3)) * (1 + 2 * rebirthCount)
         }
         if (rebirthBought) {
@@ -127,7 +127,7 @@ class CLICKER {
             rect(300, 250, 100, 100)
             fill(74, 125, 26)
             text("Press", 350, 290)
-            text("Space", 350, 320)
+            text("C", 350, 320)
             fill(250, 217, 70)
             square(600, 0, 100)
         } else if (rebirthBought) {
@@ -135,7 +135,7 @@ class CLICKER {
             rect(300, 250, 100, 100)
             fill(58, 64, 26)
             text("Press", 350, 290)
-            text("Space", 350, 320)
+            text("C", 350, 320)
             fill(0)
             square(600, 0, 100)
             fill(255)
