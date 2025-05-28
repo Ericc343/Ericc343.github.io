@@ -2,10 +2,14 @@ let clicker, upgrade, tenUp, rebirth
 let upgradeCount1 = 0
 let upgradeCount2 = 0
 let upgradeCount3 = 0
+let cost1 = 10
+let cost2 = 2000
+let cost3 = 50000
 let gameState = 0
 let points = 0
 let tenUpBought = false
 let tenUpOn = false
+let buyMulti = 9
 let rebirthBought = false
 let rebirthCount = 0
 
@@ -37,12 +41,12 @@ function stats() {
     textSize(30)
     if (!rebirthBought) {
         fill(0)
-        text("Points: ", 365, 40)
-        text(points, 355, 75)
+        text("Points: ", 365, 100)
+        text(points, 355, 135)
     } else if (rebirthBought) {
         fill(255)
-        text("Points: ", 365, 40)
-        text(points, 355, 75)
+        text("Points: ", 365, 100)
+        text(points, 355, 135)
     }
 }
 
@@ -51,9 +55,16 @@ function keyPressed() {
         if (key == ' ') {
             points += round(((1 + upgradeCount1) * (1 + 0.1 * upgradeCount2)) ** (1 + .001 * upgradeCount3)) * (1 + 2 * rebirthCount)
         }
-        if (key == 'b' && points >= 5000 && !tenUpBought) {
-            tenUpBought = true
-            points -= 5000
+        if (rebirthBought) {
+            if (key == 'b' && points >= 10000 && !tenUpBought) {
+                tenUpBought = true
+                points -= 10000
+            }
+        } else if (!rebirthBought) {
+            if (key == 'b' && points >= 5000 && !tenUpBought) {
+                tenUpBought = true
+                points -= 5000
+            }
         }
         if (key == 't' && tenUpBought && tenUpOn) {
             tenUpOn = false
@@ -69,32 +80,33 @@ function keyPressed() {
             upgradeCount3 = 0
             tenUpBought = false
             tenUpOn = false
+            buyMulti += 10
         }
         if (tenUpOn) {
-            if (key == 'e' && points >= 100) {
-                    upgradeCount1 += 10
-                    points -= 100
+            if (key == 'e' && points >= 10 * cost1) {
+                upgradeCount1 += 1 + buyMulti
+                points -= cost1 * (1 + buyMulti)
             }
-            if (key == 'f' && points >= 20000) {
-                    upgradeCount2 += 10
-                    points -= 20000
+            if (key == 'f' && points >= 10 * cost2) {
+                upgradeCount2 += 1 + buyMulti
+                points -= cost2 * (1 + buyMulti)
             }
-            if (key == 'r' && points >= 500000) {
-                    upgradeCount3 += 10
-                    points -= 500000
+            if (key == 'r' && points >= 10 * cost3) {
+                upgradeCount3 += 1 + buyMulti
+                points -= cost3 * (1 + buyMulti)
             }
         } else if (!tenUpOn) {
-            if (key == 'e' && points >= 10) {
+            if (key == 'e' && points >= cost1) {
                 upgradeCount1++
-                points -= 10
+                points -= cost1
             }
-            if (key == 'f' && points >= 2000) {
+            if (key == 'f' && points >= cost2) {
                 upgradeCount2++
-                points -= 2000
+                points -= cost2
             }
-            if (key == 'r' && points >= 50000) {
+            if (key == 'r' && points >= cost3) {
                 upgradeCount3++
-                points -= 50000
+                points -= cost3
             }
         }
         //Only when changing and developing
@@ -138,54 +150,77 @@ class UPGRADE {
         noStroke()
         textAlign(CENTER)
         textFont('Courier New')
-
         fill(250, 250, 250)
         rect(250, 500, 200, 80)
         fill(185, 185, 185)
         rect(250, 460, 200, 40)
-        fill(125, 125, 125)
-        textSize(23)
-        text("+1 points", 350, 490)
-        fill(100, 100, 100)
-        text("Cost: ", 360, 525)
-        text(10, 350, 565)
         fill(100, 150, 200)
         rect(230, 445, 30, 30)
         fill(255)
         textSize(20)
         text("E", 245, 465)
-
         fill(250, 250, 250)
         rect(25, 500, 200, 80)
         fill(185, 185, 185)
         rect(25, 460, 200, 40)
-        fill(125, 125, 125)
-        textSize(23)
-        text("+.1x points", 125, 490)
-        fill(100, 100, 100)
-        text("Cost: ", 130, 525)
-        text(2000, 120, 565)
         fill(100, 150, 200)
         rect(10, 445, 30, 30)
         fill(255)
         textSize(20)
         text("F", 25, 465)
-
         fill(250, 250, 250)
         rect(475, 500, 200, 80)
         fill(185, 185, 185)
         rect(475, 460, 200, 40)
-        fill(125, 125, 125)
-        textSize(23)
-        text("points^(+.001)", 580, 490)
-        fill(100, 100, 100)
-        text("Cost: ", 580, 525)
-        text(50000, 568, 565)
         fill(100, 150, 200)
         rect(455, 445, 30, 30)
         fill(255, 255, 255)
         textSize(20)
         text("R", 470, 465)
+
+        if (!tenUpOn) {
+            fill(125, 125, 125)
+            textSize(23)
+            text("+1 points", 350, 490)
+            fill(100, 100, 100)
+            text("Cost: ", 360, 525)
+            text(cost1, 350, 565)
+
+            fill(125, 125, 125)
+            textSize(23)
+            text("+.1x points", 125, 490)
+            fill(100, 100, 100)
+            text("Cost: ", 130, 525)
+            text(cost2, 120, 565)
+
+            fill(125, 125, 125)
+            textSize(23)
+            text("points^(+.001)", 580, 490)
+            fill(100, 100, 100)
+            text("Cost: ", 580, 525)
+            text(cost3, 568, 565)
+        } else if (tenUpOn) {
+            fill(125, 125, 125)
+            textSize(23)
+            text("+" + (1 + buyMulti) + " points", 350, 490)
+            fill(100, 100, 100)
+            text("Cost: ", 360, 525)
+            text(cost1 * (1 + buyMulti), 350, 565)
+
+            fill(125, 125, 125)
+            textSize(23)
+            text("+" + ((1 + buyMulti) / 10) + "x points", 125, 490)
+            fill(100, 100, 100)
+            text("Cost: ", 130, 525)
+            text(cost2 * (1 + buyMulti), 120, 565)
+
+            fill(125, 125, 125)
+            textSize(23)
+            text("points^(+.0" + ((1 + buyMulti) / 10) + ")", 580, 490)
+            fill(100, 100, 100)
+            text("Cost: ", 580, 525)
+            text(cost3 * (1 + buyMulti), 568, 565)
+        }
     }
 }
 
@@ -194,40 +229,76 @@ class TENUP {
         noStroke()
         textAlign(CENTER)
         textFont('Courier New')
-
-        if (!tenUpBought) {
-            fill(225, 225, 225)
-            rect(500, 275, 200, 40)
-            fill(100)
-            textSize(16.5)
-            text("Buy ten: 5000 points", 600, 300)
-            textSize(15)
-            fill(100, 150, 200)
-            rect(490, 265, 20, 20)
-            fill(255, 255, 255)
-            text("B", 500, 280)
-        } else if (tenUpBought && !tenUpOn) {
-            fill(225, 60, 70)
-            rect(500, 275, 200, 40)
-            fill(0)
-            textSize(20)
-            text("Buy ten", 600, 300)
-            textSize(15)
-            fill(100, 150, 200)
-            rect(490, 265, 20, 20)
-            fill(255, 255, 255)
-            text("T", 500, 280)
-        } else if (tenUpBought && tenUpOn) {
-            fill(60, 255, 60)
-            rect(500, 275, 200, 40)
-            fill(0)
-            textSize(20)
-            text("Buy ten", 600, 300)
-            textSize(15)
-            fill(100, 150, 200)
-            rect(490, 265, 20, 20)
-            fill(255, 255, 255)
-            text("T", 500, 280)
+        if (!rebirthBought) {
+            if (!tenUpBought) {
+                fill(225, 225, 225)
+                rect(500, 275, 200, 40)
+                fill(100)
+                textSize(16.5)
+                text("Buy ten: 5000 points", 600, 300)
+                textSize(15)
+                fill(100, 150, 200)
+                rect(490, 265, 20, 20)
+                fill(255, 255, 255)
+                text("B", 500, 280)
+            } else if (tenUpBought && !tenUpOn) {
+                fill(225, 60, 70)
+                rect(500, 275, 200, 40)
+                fill(0)
+                textSize(20)
+                text("Buy ten", 600, 300)
+                textSize(15)
+                fill(100, 150, 200)
+                rect(490, 265, 20, 20)
+                fill(255, 255, 255)
+                text("T", 500, 280)
+            } else if (tenUpBought && tenUpOn) {
+                fill(60, 255, 60)
+                rect(500, 275, 200, 40)
+                fill(0)
+                textSize(20)
+                text("Buy ten", 600, 300)
+                textSize(15)
+                fill(100, 150, 200)
+                rect(490, 265, 20, 20)
+                fill(255, 255, 255)
+                text("T", 500, 280)
+            }
+        } else if (rebirthBought) {
+            if (!tenUpBought) {
+                fill(225, 225, 225)
+                rect(500, 275, 200, 40)
+                fill(100)
+                textSize(16.5)
+                text("Buy 20: 10000 points", 600, 300)
+                textSize(15)
+                fill(100, 150, 200)
+                rect(490, 265, 20, 20)
+                fill(255, 255, 255)
+                text("B", 500, 280)
+            } else if (tenUpBought && !tenUpOn) {
+                fill(225, 60, 70)
+                rect(500, 275, 200, 40)
+                fill(0)
+                textSize(20)
+                text("Buy 20", 600, 300)
+                textSize(15)
+                fill(100, 150, 200)
+                rect(490, 265, 20, 20)
+                fill(255, 255, 255)
+                text("T", 500, 280)
+            } else if (tenUpBought && tenUpOn) {
+                fill(60, 255, 60)
+                rect(500, 275, 200, 40)
+                fill(0)
+                textSize(20)
+                text("Buy 20", 600, 300)
+                textSize(15)
+                fill(100, 150, 200)
+                rect(490, 265, 20, 20)
+                fill(255, 255, 255)
+                text("T", 500, 280)
+            }
         }
     }
 }
